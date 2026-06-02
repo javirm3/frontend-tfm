@@ -1,0 +1,114 @@
+\documentclass[tikz,border=14pt]{standalone}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usetikzlibrary{positioning,fit,arrows.meta,calc,backgrounds}
+
+% ── Colour palette ──────────────────────────────────────────────────────────
+\definecolor{stateBlue}{HTML}{2E86AB}      % hidden states
+\definecolor{obsGreen}{HTML}{3BB273}       % observations
+\definecolor{transOrange}{HTML}{E84855}    % transition arrows
+\definecolor{emitPurple}{HTML}{7B2D8B}     % emission arrows
+\definecolor{plateGray}{HTML}{AAAAAA}      % plate border
+\definecolor{annoTrans}{HTML}{C0392B}      % transition annotation text
+\definecolor{annoEmit}{HTML}{6C3483}       % emission annotation text
+\definecolor{colL}{HTML}{E41A1C}           % histogram bar left
+\definecolor{colC}{HTML}{377EB8}           % histogram bar centre
+\definecolor{colR}{HTML}{4DAF4A}           % histogram bar right
+\definecolor{colTA}{HTML}{E41A1C}          % trans bar 1 – red
+\definecolor{colTW}{HTML}{FFC107} 
+\begin{document}
+\begin{tikzpicture}[
+  font=\sffamily,
+  >=Latex,
+  %% Node styles
+  state/.style={
+    circle, draw=black, fill=white,
+    very thick, minimum size=13mm, inner sep=0pt,
+    font=\sffamily\bfseries
+  },
+  obs/.style={
+    circle, draw=black, fill=white,
+    very thick, minimum size=13mm, inner sep=0pt,
+    font=\sffamily\bfseries
+  },
+  %% Arrow styles
+  tarrow/.style={->, very thick, color=transOrange,
+                 shorten >=2pt, shorten <=2pt},
+  earrow/.style={->, very thick, color=emitPurple,
+                 shorten >=2pt, shorten <=2pt},
+  dotarrow/.style={->, thick, dotted, color=black!50,
+                   shorten >=2pt, shorten <=2pt},
+]
+
+%% ── Hidden states ──────────────────────────────────────────────────────────
+\node[state] (z0) {$z_{t-1}$};
+\node[state, right=30mm of z0] (z1) {$z_t$};
+\node[state, right=30mm of z1] (z2) {$z_{t+1}$};
+
+%% entry / exit dots
+\node[left=12mm  of z0, text=black!50] (ldots) {$\cdots$};
+\node[right=12mm of z2, text=black!50] (rdots) {$\cdots$};
+
+%% ── Observations ───────────────────────────────────────────────────────────
+\node[obs, below=22mm of z0] (y0) {$y_{t-1}$};
+\node[obs, below=22mm of z1] (y1) {$y_t$};
+\node[obs, below=22mm of z2] (y2) {$y_{t+1}$};
+%% phantom node to push plate border lower
+\node[below=2.5mm of y1, inner sep=0pt, minimum size=0pt] (phantomBot) {};
+
+%% ── Transition arrows ──────────────────────────────────────────────────────
+\draw[dotarrow] (ldots) -- (z0);
+\draw[tarrow]   (z0) --  (z1);
+\draw[tarrow]   (z1) --  (z2);
+\draw[dotarrow] (z2)    -- (rdots);
+
+%% ── Emission arrows ────────────────────────────────────────────────────────
+\draw[earrow] (z0) -- (y0);
+\draw[earrow] (z1) -- (y1);
+\draw[earrow] (z2) -- (y2);
+
+%% bar geometry: width=1.8mm, gap=0.4mm
+%% x centres: L=-2.2mm, C=0mm, R=2.2mm
+%% ── Histograms beside emission arrows (right side) ──────────────────────────
+%% helper macro: histogram centred at coordinate, with given bar heights
+%% y0: left-skewed  (tall L, medium C, short R)  – placed right of z0->y0 midpoint
+\node[inner sep=0pt, anchor=west] at ($(z0)!0.5!(y0)+(2mm,0)$)
+  {\includegraphics[width=13mm]{3WM.pdf}};
+\node[inner sep=0pt, anchor=west] at ($(z1)!0.5!(y1)+(2mm,0)$)
+  {\includegraphics[width=13mm]{3WM.pdf}};
+\node[inner sep=0pt, anchor=west] at ($(z2)!0.5!(y2)+(2mm,0)$)
+  {\includegraphics[width=13mm]{3WM.pdf}};
+
+\coordinate (ht0) at ($(z0)!0.5!(z1)+(0,8mm)$);
+\fill[colTA] ($(ht0)+(-6mm,-3mm)$) rectangle ($(ht0)+(-3mm, 2mm)$);
+\fill[colTW] ($(ht0)+(3mm,-3mm)$)  rectangle ($(ht0)+(6mm,  0mm)$);
+\draw[black, line width=1.3pt] ($(ht0)+(-7mm,-3mm)$) -- ($(ht0)+(7mm,-3mm)$);
+\node[font=\sffamily\small] at ($(ht0)+(0.025,-1.2mm)$) {$\cdots$};
+\node[font=\sffamily\small] at ($(ht0)+(-4.5mm,-5mm)$) {$1$};
+\node[font=\sffamily\small] at ($(ht0)+(4.5mm,-5mm)$)  {$k$};
+\coordinate (ht1) at ($(z1)!0.5!(z2)+(0,8mm)$);
+\fill[colTA] ($(ht1)+(-6mm,-3mm)$) rectangle ($(ht1)+(-3mm,  0.5mm)$);
+\fill[colTW] ($(ht1)+(3mm,-3mm)$)  rectangle ($(ht1)+(6mm,  2mm)$);
+\draw[black, line width=1.3pt] ($(ht1)+(-7mm,-3mm)$) -- ($(ht1)+(7mm,-3mm)$);
+\node[font=\sffamily\small] at ($(ht1)+(0.025,-1.2mm)$) {$\cdots$};
+\node[font=\sffamily\small] at ($(ht1)+(-4.5mm,-5mm)$) {$1$};
+\node[font=\sffamily\small] at ($(ht1)+(4.5mm,-5mm)$)  {$k$};
+
+
+%% ── Plate ──────────────────────────────────────────────────────────────────
+\begin{scope}[on background layer]
+  \node[
+    rounded corners=8pt,
+    draw=plateGray, thick, dashed,
+    fill=gray!4,
+    inner xsep=26pt, inner ysep=20pt,
+    fit=(z0)(z1)(z2)(y0)(y1)(y2)(phantomBot)
+  ] (plate) {};
+\end{scope}
+\node[above right=2pt and 2pt of plate.south west,
+      font=\sffamily\small, text=plateGray] {$t = 1, \dots, T$};
+
+
+
+\end{tikzpicture}
+\end{document}

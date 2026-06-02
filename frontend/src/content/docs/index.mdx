@@ -1,0 +1,38 @@
+---
+title: glmhmmt
+description: Session-aware GLM-HMMs for behavioural neuroscience tasks.
+template: splash
+hero:
+  tagline: Softmax GLM-HMMs, task adapters, and interactive analysis notebooks.
+  image:
+    file: ../../assets/houston.webp
+  actions:
+    - text: Read the introduction
+      link: /docs/intro
+      icon: right-arrow
+    - text: Open the framework guide
+      link: /docs/guide/framework
+      icon: right-arrow
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What is here?
+
+<CardGrid stagger>
+	<Card title="Task-adapter workflow" icon="document">
+		The docs explain how task-specific loading, filtering, labels, and plots are isolated from the core model package.
+	</Card>
+	<Card title="Repository guide" icon="open-book">
+		The framework guide covers the repository structure, data flow, fitting scripts, and analysis notebooks.
+	</Card>
+	<Card title="Add a new task" icon="add-document">
+		Follow the task guide to register a new experimental task without changing the shared model code.
+	</Card>
+	<Card title="Interactive notebooks" icon="pencil">
+		Open browser-based marimo notebooks for model comparison and GLM-HMM inspection.
+	</Card>
+	<Card title="API reference" icon="setting">
+		Use the reference pages for `SoftmaxGLMHMM`, feature builders, postprocessing, and fit views.
+	</Card>
+</CardGrid>
